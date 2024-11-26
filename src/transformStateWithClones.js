@@ -1,7 +1,8 @@
 'use strict';
 
-const { meta: action } = require('eslint-plugin-node/lib/rules/no-sync');
+// const { meta: action } = require('eslint-plugin-node/lib/rules/no-sync');
 
+//
 /**
  * @param {Object} state
  * @param {Object[]} actions
@@ -13,21 +14,26 @@ function transformStateWithClones(state, actions) {
   let newState = { ...state };
 
   for (const action of actions) {
-    if (action.type === 'addProperties') {
-      newState = { ...newState, ...action.extraData };
-      newArray.push({ ...newState });
-    }
-
-    if (action.type === 'removeProperties') {
-      for (const key of action.keysToRemove) {
-        delete newState[key];
+    switch (action.type) {
+      case 'addProperties': {
+        newState = { ...newState, ...action.extraData };
+        newArray.push({ ...newState });
+        break;
       }
-      newArray.push({ ...newState });
-    }
 
-    if (action.type === 'clear') {
-      newState = {};
-      newArray.push({ ...newState });
+      case 'removeProperties': {
+        for (const key of action.keysToRemove) {
+          delete newState[key];
+        }
+        newArray.push({ ...newState });
+        break;
+      }
+
+      case 'clear': {
+        newState = {};
+        newArray.push({ ...newState });
+        break;
+      }
     }
   }
 
